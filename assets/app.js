@@ -207,10 +207,9 @@ async function loadFolders(){
     return;
   }
   try{
-    const response=await fetch('/api/portfolio',{
-      cache:'no-store'
-    }
-    );
+    const response = await fetch('./portfolio.json', {
+      cache: 'no-store'
+    });
     if(!response.ok)throw new Error('Portfolio unavailable');
     const data=await response.json();
     if(!Array.isArray(data.projects))return;
