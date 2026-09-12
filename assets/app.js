@@ -202,17 +202,15 @@ function showGalleryError(message){
   document.querySelector('.download-pdf').hidden=true
 }
 async function loadFolders(){
-  if(!/^https?:$/.test(location.protocol)){
-    showGalleryError('Откройте сайт через локальный сервер: http://127.0.0.1:8765/');
-    return;
-  }
   try{
-    const response = await fetch('./portfolio.json', {
-      cache: 'no-store'
-    });
-    if(!response.ok)throw new Error('Portfolio unavailable');
-    const data=await response.json();
-    if(!Array.isArray(data.projects))return;
+    let data=window.PORTFOLIO_DATA;
+    if(location.protocol!=='file:'){
+      try{
+        const response=await fetch('./portfolio.json',{cache:'no-cache'});
+        if(response.ok)data=await response.json();
+      }catch(error){ /* Generated JS also works offline and with file://. */ }
+    }
+    if(!Array.isArray(data?.projects))throw new Error('Missing generated portfolio data');
     const list=data.projects;
     projects.splice(0,projects.length,{
       title:'Все работы',kind:'Проекты и отдельные слайды',slides:list.flatMap(p=>p.slides)
@@ -228,7 +226,7 @@ async function loadFolders(){
     document.querySelector('.gallery-footer').hidden=!hasSlides;
     const pdf=document.querySelector('.download-pdf');
     pdf.hidden=!hasSlides;
-    pdf.href='/api/portfolio.pdf';
+    pdf.href='downloads/portfolio.pdf';
     pdf.querySelector('span').textContent='PDF ↓';
     if(hasSlides)render();
     else{
@@ -237,7 +235,7 @@ async function loadFolders(){
     }
   }
   catch(e){
-    showGalleryError('Не удалось загрузить портфолио. Обновите страницу или проверьте локальный сервер.')
+    showGalleryError('Не удалось загрузить портфолио. Запустите сборку портфолио и обновите страницу.')
   }
 }
 loadFolders();

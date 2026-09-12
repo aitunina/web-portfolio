@@ -8,3 +8,19 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+
+# Private originals and retired scripts
+/local-only/
+# Generated outputs (rebuilt locally and in GitHub Actions)
+/dist/
+/downloads/
+/output/
+/portfolio.json
+/assets/portfolio-data.js
+# Local editor and OS files
+.DS_Store
+.idea/
+*.iml
+__pycache__/
+*.py[cod]
+.venv/
