@@ -18,3 +18,5 @@
 Обновление портрета: заменён встроенный зелёный фон на нейтральный графитовый через imagegen. Предыдущая версия: local-only/source-photos/portrait-green-background.webp; новый исходник: local-only/source-photos/portrait-graphite-generated.png. Мягкое сопряжение краёв и свечение задаются в CSS.
 
 Текущий портрет assets/portrait-original.png — байт-в-байт ppt/media/image1.png из исходного резюме, 853×1280, PNG с alpha; без генерации, изменения цвета и повторного сжатия. Предыдущие генерации сохранены в local-only/source-photos/.
+
+Текущая версия: assets/portrait-pistachio.png — точечная перекраска ткани исходного PNG по разрешению пользователя. Лицо, исходный alpha и все пиксели вне маски сохранены побайтово; разрешение 853×1280, сжатие PNG без потерь. Рецепт и маска для повторного редактирования: local-only/source-photos/recolor-blazer.py и blazer-selection.png. Генерация с нарисованной сеткой отклонена и в сайт не включена.

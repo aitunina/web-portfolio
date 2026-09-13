@@ -53,7 +53,7 @@ def build(output=None):
         for name in ['index.html','portfolio.json','CNAME']:
             if (ROOT/name).exists():shutil.copy2(ROOT/name,target/name)
         (target/'.nojekyll').touch()
-        for name in ['styles.css','app.js','portrait-original.png','favicon.svg','portfolio-data.js']:
+        for name in ['styles.css','app.js','portrait-pistachio.png','favicon.svg','portfolio-data.js']:
             (target/'assets').mkdir(exist_ok=True)
             shutil.copy2(ROOT/'assets'/name,target/'assets'/name)
         for name in ['fonts','events']:

@@ -249,7 +249,7 @@ dialog[open]{display:grid;grid-template-rows:76px minmax(0,1fr) 82px;inset:0;mar
 }
 /* Portrait: one source of truth. Native alpha, no baked backdrop or blend mode. */
 .portrait-wrap{position:relative;isolation:isolate;align-self:center;justify-self:center;aspect-ratio:853/1280;width:100%;max-width:360px;overflow:visible}
-.portrait-wrap::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 50% 48% at 50% 48%,#c7d99d22 0%,#c7d99d16 30%,#c7d99d08 60%,#c7d99d02 80%,transparent 100%)}
+.portrait-wrap::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 50% 48% at 50% 48%,#c7d99d80 0%,#c7d99d65 30%,#c7d99d38 60%,#c7d99d10 80%,transparent 100%)}
 .portrait{display:block;width:100%;height:auto;object-fit:contain;mask-image:linear-gradient(to bottom,black 50%,#000f 55%,#000e 65%,#000c 72%,#0009 80%,#0005 88%,#0002 94%,transparent 100%)}
 @media(min-width:761px){.portrait-wrap{justify-self:start}}
 @media(max-width:600px){.portrait-wrap{max-width:300px;margin-inline:auto}}
