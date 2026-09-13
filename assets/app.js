@@ -221,7 +221,7 @@ async function loadFolders(){
     let data=window.PORTFOLIO_DATA;
     if(location.protocol!=='file:'){
       try{
-        const response=await fetch('./portfolio.json',{cache:'no-cache'});
+        const response=await fetch($('app-script').dataset.portfolioSrc,{cache:'no-cache'});
         if(response.ok)data=await response.json();
       }catch(error){ /* Generated JS also works offline and with file://. */ }
     }
@@ -241,7 +241,7 @@ async function loadFolders(){
     document.querySelector('.gallery-footer').hidden=!hasSlides;
     const pdf=document.querySelector('.download-pdf');
     pdf.hidden=!hasSlides;
-    pdf.href='downloads/portfolio.pdf';
+    pdf.href=data.pdf||'downloads/portfolio.pdf';
     pdf.querySelector('span').textContent='PDF ↓';
     if(hasSlides)render();
     else{

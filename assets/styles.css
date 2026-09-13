@@ -40,7 +40,7 @@ nav{min-height:80px;display:flex;align-items:center;justify-content:space-betwee
 .stat{display:flex;align-items:center;gap:20px;min-width:0}
 .stat+.stat{border-left:1px solid var(--line);padding-left:32px}
 .stat strong{color:var(--accent);font-size:36px;font-weight:400;line-height:1.15;letter-spacing:-.03em;white-space:nowrap}
-.stat span{font-size:13px;line-height:1.55;color:var(--muted)}
+.stat span{font-size:13px;line-height:1.55;color:var(--muted);overflow-wrap:anywhere}
 section{padding:var(--section-space) 0;border-top:1px solid var(--line)}
 h2{font-size:clamp(32px,3.5vw,46px);font-weight:400;line-height:1.18;letter-spacing:-.035em;margin:0;color:var(--ink);text-wrap:balance}
 .section-title{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:var(--block-gap)}

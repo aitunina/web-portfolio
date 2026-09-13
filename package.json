@@ -1,0 +1,7 @@
+{
+  "name": "itunina-portfolio-checks",
+  "private": true,
+  "scripts": { "test": "node tests/site.cjs" },
+  "devDependencies": { "playwright": "1.62.1" },
+  "engines": { "node": ">=20" }
+}

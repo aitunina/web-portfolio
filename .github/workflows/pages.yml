@@ -11,6 +11,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,6 +21,25 @@ jobs:
           cache-dependency-path: requirements-build.txt
       - run: pip install -r requirements-build.txt
       - run: python scripts/build.py --output dist
+      - name: Check release files and portrait quality
+        run: python tests/build_test.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium webkit
+      - name: Check layout and interactions in Chromium and WebKit
+        run: npm test
+        env:
+          SITE_ROOT: dist
+      - name: Save QA measurements and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: layout-qa
+          path: output/qa
+          retention-days: 7
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

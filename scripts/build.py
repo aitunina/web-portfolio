@@ -1,6 +1,7 @@
 """Build static manifests and PDF. No web server is required."""
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, unquote, urlsplit
+from hashlib import sha256
 from io import BytesIO
 from threading import Lock
 import argparse, json, re, shutil
@@ -12,6 +13,22 @@ PORTFOLIO=ROOT/'portfolio'
 EXT={'.png','.jpg','.jpeg','.webp'}
 PDF_LOCK=Lock()
 PDF_CACHE={}
+def versioned(path, root=ROOT):
+    """Keep editable filenames; change the public URL only when bytes change."""
+    return quote(path.relative_to(root).as_posix())+'?v='+sha256(path.read_bytes()).hexdigest()[:16]
+
+def version_references(text, root, *, css=False):
+    pattern=r"(url\(['\"]?)([^)'\"]+)(['\"]?\))" if css else r'((?:src|href|data-portfolio-src)=")([^"]+)(")'
+    def replace(match):
+        url=urlsplit(match[2])
+        if url.scheme or url.netloc or not url.path or url.path.startswith('/'):
+            return match[0]
+        file=(root/unquote(url.path)).resolve()
+        if not file.is_relative_to(root.resolve()) or not file.is_file():
+            return match[0]
+        return match[1]+versioned(file,root.resolve())+match[3]
+    return re.sub(pattern,replace,text)
+
 def natural(value):
     return [int(x) if x.isdigit() else x.casefold() for x in re.split(r'(\d+)',value)]
 def scan():
@@ -29,7 +46,7 @@ def pdf_bytes(groups):
     key=tuple((str(p),p.stat().st_mtime_ns,p.stat().st_size) for _,files in groups for p in files)
     with PDF_LOCK:
         if PDF_CACHE.get('key')==key:return PDF_CACHE['data']
-        stream=BytesIO();pdf=canvas.Canvas(stream,pagesize=(960,540));pdf.setTitle('Alexandra Itunina - Portfolio');pdf.setAuthor('Alexandra Itunina')
+        stream=BytesIO();pdf=canvas.Canvas(stream,pagesize=(960,540),invariant=1);pdf.setTitle('Alexandra Itunina - Portfolio');pdf.setAuthor('Alexandra Itunina')
         for _,files in groups:
             for path in files:
                 with Image.open(path) as source:
@@ -39,12 +56,12 @@ def pdf_bytes(groups):
 def build(output=None):
     groups=scan()
     if not groups:raise SystemExit('No valid project images in portfolio/.')
-    data={'projects':[{'title':name,'kind':'','slides':[quote(p.relative_to(ROOT).as_posix()) for p in files]} for name,files in groups]}
+    (ROOT/'downloads').mkdir(exist_ok=True)
+    (ROOT/'downloads/portfolio.pdf').write_bytes(pdf_bytes(groups))
+    data={'pdf':versioned(ROOT/'downloads/portfolio.pdf'),'projects':[{'title':name,'kind':'','slides':[versioned(p) for p in files]} for name,files in groups]}
     payload=json.dumps(data,ensure_ascii=False,indent=2)
     (ROOT/'portfolio.json').write_text(payload+'\n',encoding='utf-8')
     (ROOT/'assets/portfolio-data.js').write_text('window.PORTFOLIO_DATA = '+payload+';\n',encoding='utf-8')
-    (ROOT/'downloads').mkdir(exist_ok=True)
-    (ROOT/'downloads/portfolio.pdf').write_bytes(pdf_bytes(groups))
     if output:
         target=Path(output).resolve()
         if target!=ROOT/'dist':raise SystemExit('Deployment output must be dist/.')
@@ -63,6 +80,11 @@ def build(output=None):
         for _,files in groups:
             for source in files:
                 dest=target/source.relative_to(ROOT);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,dest)
+        # Hash CSS after its font URLs; hash HTML last so all dependencies agree.
+        css=target/'assets/styles.css'
+        css.write_text(version_references(css.read_text(encoding='utf-8'),css.parent,css=True),encoding='utf-8')
+        html=target/'index.html'
+        html.write_text(version_references(html.read_text(encoding='utf-8'),target),encoding='utf-8')
     print(f'Built {len(groups)} projects, {sum(len(files) for _,files in groups)} slides and PDF.')
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--output');args=parser.parse_args();build(args.output)
