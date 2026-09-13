@@ -6,17 +6,24 @@ const viewer=$('viewer');
 let motionDirection=1, autoTimer;
 function resetAuto(){
   clearTimeout(autoTimer);
-  if(!document.hidden&&projects[project]?.slides.length>1)autoTimer=setTimeout(()=>step(1),5000)
+  if(!document.hidden&&!viewer.open&&projects[project]?.slides.length>1)autoTimer=setTimeout(()=>step(1),5000)
 }
+const slideDuration=1000;
+let thumbFrame;
 function revealThumb(){
+  cancelAnimationFrame(thumbFrame);
   const strip=$('thumbs'),active=strip.children[current];
   if(!active)return;
-  const left=active.offsetLeft;
-  const target=left-(strip.clientWidth-active.offsetWidth)/2;
-  strip.scrollTo({
-    left:Math.max(0,target),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'
+  const start=strip.scrollLeft;
+  const target=Math.min(strip.scrollWidth-strip.clientWidth,Math.max(0,active.offsetLeft-(strip.clientWidth-active.offsetWidth)/2));
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){strip.scrollLeft=target;return}
+  const began=performance.now();
+  function tick(now){
+    const t=Math.min(1,(now-began)/slideDuration),ease=t*t*(3-2*t);
+    strip.scrollLeft=start+(target-start)*ease;
+    if(t<1)thumbFrame=requestAnimationFrame(tick);
   }
-  )
+  thumbFrame=requestAnimationFrame(tick);
 }
 function fitGallery(){
   const section=$('portfolio'),style=getComputedStyle(section);
@@ -27,8 +34,12 @@ function fitGallery(){
   }
   ;
   const available=window.innerHeight-document.querySelector('header').getBoundingClientRect().height-16-parseFloat(style.paddingTop)-outer(title)-outer(tabs)-outer(footer)-outer(thumbs)-24;
-  const natural=$('stage').clientWidth*9/16;
-  $('open').style.height=Math.min(natural,Math.max(150,available))+'px'
+  const stageStyle=getComputedStyle($('stage'));
+  const sideSpace=2*(parseFloat(stageStyle.columnGap)+$('prev').getBoundingClientRect().width);
+  const natural=(section.clientWidth-sideSpace)*9/16;
+  const height=Math.min(natural,Math.max(150,available));
+  $('open').style.height=height+'px';
+  section.style.setProperty('--gallery-width',(height*16/9+sideSpace)+'px')
 }
 window.addEventListener('resize',fitGallery);
 document.addEventListener('visibilitychange',resetAuto);
@@ -52,7 +63,7 @@ function swapImage(img,src){
         opacity:0,transform:`translateX(${-motionDirection*14}px)`
       }
       ],{
-        duration:900,easing:'cubic-bezier(.22,.61,.36,1)'
+        duration:slideDuration,easing:'cubic-bezier(.42,0,.58,1)'
       }
       );
       a.onfinish=()=>ghost.remove()
@@ -64,7 +75,7 @@ function swapImage(img,src){
       opacity:1,transform:'translateX(0)'
     }
     ],{
-      duration:1000,easing:'cubic-bezier(.2,.7,.2,1)'
+      duration:slideDuration,easing:'cubic-bezier(.42,0,.58,1)'
     }
     )
   }
@@ -146,6 +157,7 @@ $('modal-prev').onclick=()=>step(-1);
 $('modal-next').onclick=()=>step(1);
 $('open').onclick=()=>{
   viewer.showModal();
+  clearTimeout(autoTimer);
   document.body.classList.add('modal-open');
   syncModal();
   $('close').focus()
@@ -154,6 +166,7 @@ $('open').onclick=()=>{
 $('close').onclick=()=>viewer.close();
 viewer.addEventListener('close',()=>{
   document.body.classList.remove('modal-open');
+  resetAuto();
   $('open').focus()
 }
 );
