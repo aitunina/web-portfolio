@@ -213,5 +213,18 @@ dialog::backdrop{background:var(--surface)}body.modal-open{overflow:hidden}
 .portrait{mask-image:linear-gradient(to right,transparent,black 12%,black 88%,transparent),linear-gradient(to bottom,black 65%,#000e 76%,#0008 89%,transparent 100%)}
 @media(max-width:760px){.stage{gap:12px}.gallery-footer{padding-inline:56px}}
 @media(max-width:600px){.stage{grid-template-columns:36px minmax(0,1fr) 36px;gap:6px}.gallery-footer{padding-inline:0}.portrait{mask-image:none}}
+/* Full portrait framing and a shared mobile contact rhythm. */
+@media(min-width:761px){
+  .hero-grid{grid-template-columns:minmax(0,600px) minmax(0,360px);gap:24px;max-width:984px;margin-inline:auto}
+  .portrait-wrap{aspect-ratio:1023/1538;max-width:360px;justify-self:start}
+  .portrait{object-fit:contain;mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent)}
+}
+@media(max-width:760px){
+  .contact-grid{padding-block:24px;gap:24px}
+  .contact-main,.contact-main>div:first-child{display:contents}
+  .contact h2{margin:0;text-align:center}
+  .contact-links{margin:0}
+  .contact-links a{min-height:0;line-height:1.6}
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.scroll-reveal{opacity:1;transform:none}}
 @media print{.scroll-reveal{opacity:1;transform:none}}
