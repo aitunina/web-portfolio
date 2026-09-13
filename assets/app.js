@@ -42,6 +42,8 @@ function fitGallery(){
   section.style.setProperty('--gallery-width',(height*16/9+sideSpace)+'px')
 }
 window.addEventListener('resize',fitGallery);
+window.addEventListener('load',fitGallery);
+document.fonts.ready.then(fitGallery);
 document.addEventListener('visibilitychange',resetAuto);
 function swapImage(img,src){
   if(img.getAttribute('src')===src)return;
@@ -226,7 +228,7 @@ async function loadFolders(){
     if(!Array.isArray(data?.projects))throw new Error('Missing generated portfolio data');
     const list=data.projects;
     projects.splice(0,projects.length,{
-      title:'Все работы',kind:'Проекты и отдельные слайды',slides:list.flatMap(p=>p.slides)
+      title:'Все работы',kind:'',slides:list.flatMap(p=>p.slides)
     }
     ,...list);
     project=0;

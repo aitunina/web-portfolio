@@ -226,5 +226,26 @@ dialog::backdrop{background:var(--surface)}body.modal-open{overflow:hidden}
   .contact-links{margin:0}
   .contact-links a{min-height:0;line-height:1.6}
 }
+/* Final component invariants: no independent breakpoint overrides below these. */
+.portrait-wrap::before{transform:scale(.85);transform-origin:center}
+.portrait{object-fit:contain;mix-blend-mode:lighten;mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent),linear-gradient(to bottom,transparent,black 5%,black 85%,transparent);mask-composite:intersect}
+.portrait-wrap{aspect-ratio:1023/1538;max-width:360px}
+.tabs,.thumbs{scrollbar-width:none;-ms-overflow-style:none}
+.tabs::-webkit-scrollbar,.thumbs::-webkit-scrollbar{display:none}
+.stage .round{width:44px;height:44px;padding:0;aspect-ratio:1;border-radius:50%;border:1px solid var(--accent)}
+.contact-grid{grid-template-columns:minmax(0,1fr) minmax(0,3fr) minmax(0,1fr)}
+.contact-note{justify-self:start}.contact-note-end{justify-self:end;text-align:right;border-left:0;border-right:1px solid var(--line);padding-left:0;padding-right:20px}
+dialog[open]{display:grid;grid-template-rows:76px minmax(0,1fr) 82px;inset:0;margin:0;width:100%;height:100dvh;overflow:hidden}
+.modal-image{height:100%;min-height:0;width:100%;object-fit:contain;align-self:stretch}.modal-top,.modal-controls{height:auto}
+@media(max-width:760px){
+  .contact-grid{display:flex;flex-direction:column;align-items:stretch;padding-block:32px;gap:32px}
+  .contact-note{align-self:center;line-height:1;margin:0}.contact-note-end{display:none}
+  .contact-main,.contact-main>div:first-child{display:contents}.contact h2{margin:0;line-height:1.2}
+  .contact-links{line-height:1;align-items:center}.contact-links a{line-height:1;margin:0;min-height:0;padding:0;border:0}
+}
+@media(max-width:600px){
+  .stage{grid-template-columns:44px minmax(0,1fr) 44px;gap:6px}
+  .portrait-wrap{max-width:300px}.portrait-wrap::before{inset:0;transform:scale(.85)}
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.scroll-reveal{opacity:1;transform:none}}
 @media print{.scroll-reveal{opacity:1;transform:none}}
