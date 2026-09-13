@@ -16,3 +16,5 @@
 Фото assets/portrait-pistachio.webp создано встроенным imagegen на основе личного фото: пиджак перекрашен в мягкий фисташковый, фон приведён к тёмному оформлению страницы. Оригинал и полный сгенерированный PNG — в игнорируемой папке local-only/source-photos/. В WebP выполнена только оптимизация формата.
 
 Обновление портрета: заменён встроенный зелёный фон на нейтральный графитовый через imagegen. Предыдущая версия: local-only/source-photos/portrait-green-background.webp; новый исходник: local-only/source-photos/portrait-graphite-generated.png. Мягкое сопряжение краёв и свечение задаются в CSS.
+
+Текущий портрет assets/portrait-original.png — байт-в-байт ppt/media/image1.png из исходного резюме, 853×1280, PNG с alpha; без генерации, изменения цвета и повторного сжатия. Предыдущие генерации сохранены в local-only/source-photos/.
