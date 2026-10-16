@@ -3,10 +3,30 @@ const projects=[];
 let project=0,current=0;
 const $=id=>document.getElementById(id);
 const viewer=$('viewer');
-let motionDirection=1, autoTimer;
+let motionDirection=1, autoTimer, galleryVisible=false;
 function resetAuto(){
   clearTimeout(autoTimer);
-  if(!document.hidden&&!viewer.open&&projects[project]?.slides.length>1)autoTimer=setTimeout(()=>step(1),5000)
+  if(galleryVisible&&!document.hidden&&!viewer.open&&projects[project]?.slides.length>1)autoTimer=setTimeout(()=>step(1),5000)
+}
+function setGalleryVisible(visible){
+  if(visible===galleryVisible)return;
+  galleryVisible=visible;
+  resetAuto()
+}
+if('IntersectionObserver' in window){
+  const autoplayObserver=new IntersectionObserver(([entry])=>{
+    setGalleryVisible(entry.isIntersecting&&entry.intersectionRatio>=.25)
+  },{threshold:[0,.25],rootMargin:'-80px 0px 0px 0px'});
+  autoplayObserver.observe($('stage'))
+}else{
+  const checkGalleryVisibility=()=>{
+    const rect=$('stage').getBoundingClientRect();
+    const visibleHeight=Math.min(rect.bottom,innerHeight)-Math.max(rect.top,80);
+    setGalleryVisible(rect.height>0&&visibleHeight>=rect.height*.25)
+  };
+  window.addEventListener('scroll',checkGalleryVisibility,{passive:true});
+  window.addEventListener('resize',checkGalleryVisibility);
+  window.addEventListener('load',checkGalleryVisibility)
 }
 const slideDuration=1000;
 let thumbFrame;
